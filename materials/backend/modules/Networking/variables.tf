@@ -1,5 +1,5 @@
 ################################################################################
-# Region
+# Configure
 ################################################################################
 
 variable "name" {
@@ -80,4 +80,10 @@ variable "subnet-private_subnet_tags" {
   description = "Additional tags for the private subnets"
   type        = map(string)
   default     = {}
+}
+
+variable "eks-cluster_name" {
+  description = ""
+  type        = string
+  default     = "tu-cluster"
 }

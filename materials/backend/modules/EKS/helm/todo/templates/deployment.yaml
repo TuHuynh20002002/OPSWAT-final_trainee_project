@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+  labels:
+    app: {{ .Values.deployment.app }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.deployment.app }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.deployment.app }}
+    spec:
+      containers:
+        {{- $v := $.Files.Get "aws.yaml" | fromYaml }}
+        - name: {{ .Chart.Name }}
+          image: {{ $v.container.image }}
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          env:
+            - name: HOST
+              valueFrom: 
+                configMapKeyRef:
+                  name: todo-configmap
+                  key: host
+            - name: USERNAME
+              valueFrom: 
+                secretKeyRef:
+                  name: todo-secret
+                  key: username
+            - name: PASSWORD
+              valueFrom: 
+                secretKeyRef:
+                  name: todo-secret
+                  key: password  
+            - name: DATABASE
+              valueFrom: 
+                configMapKeyRef:
+                  name: todo-configmap
+                  key: database            

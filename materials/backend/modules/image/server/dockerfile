@@ -1,0 +1,11 @@
+FROM node
+
+WORKDIR /usr/src/app
+
+COPY . . 
+
+RUN npm install
+
+EXPOSE 5000
+
+CMD ["/bin/bash", "-c", "cd /usr/src/app; npx nodemon server"]
